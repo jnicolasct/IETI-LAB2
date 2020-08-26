@@ -6,6 +6,17 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from "moment";
 import {Login} from "./Login";
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardTimePicker,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 
 export class TodoApp extends Component {
 
@@ -23,49 +34,72 @@ export class TodoApp extends Component {
 
         return (
             <div className="TodoApp">
-                <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo"/>
-                    <h1 className="App-title">TODO React App</h1>
+                <header>
                 </header>
                 <br/>
                 <br/>
                 <form onSubmit={this.handleSubmit} className="todo-form">
                     <h3>New TODO</h3>
-                    <label htmlFor="text" className="right-margin">
-                        Text:
-                    </label>
-
-                    <input
-                        id="text"
+                    <TextField
+                        required
+                        id="Text"
+                        label="Task"
+                        color="primary"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        margin="dense"
+                        variant="outlined"
                         onChange={this.handleTextChange}
-                        value={this.state.text}>
-                    </input>
+                        value={this.state.text}
+                    />
 
                     <br/>
                     <br/>
-                    <label htmlFor="priority" className="right-margin">
-                        Priority:
-                    </label>
+                    <TextField
+                    required
+                    id="Priority"
+                    label="Priority"
+                    color="primary"
+                    type="number"
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    margin="dense"
+                    variant="outlined"
+                    onChange={this.handlePriorityChange}
+                    value={this.state.priority}
+                    />
 
-                    <input
-                        id="priority"
-                        type="number"
-                        onChange={this.handlePriorityChange}
-                        value={this.state.priority}>
-                    </input>
                     <br/>
                     <br/>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                            helperText={''}
+                            variant="inline"
+                            format="dd/MM/yyyy"
+                            margin="dense"
+                            id="due-date"
+                            label="Due Date"
+                            KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                            }}
+                            value={this.state.dueDate}
+                            onChange={this.handleDateChange}
+                        />
+                    </MuiPickersUtilsProvider>
 
-                    <DatePicker
-                        id="due-date"
-                        selected={this.state.dueDate}
-                        placeholderText="Due date"
-                        onChange={this.handleDateChange}>
-                    </DatePicker>
                     <br/>
-                    <button>
+                    <br/>
+                     <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className="submit"
+                        >
                         Add #{this.state.items.length + 1}
-                    </button>
+                    </Button>
                 </form>
                 <br/>
                 <br/>
@@ -97,12 +131,13 @@ export class TodoApp extends Component {
         e.preventDefault();
 
         if (!this.state.text.length || !this.state.priority.length || !this.state.dueDate)
+
             return;
 
         const newItem = {
             text: this.state.text,
             priority: this.state.priority,
-            dueDate: this.state.dueDate,
+            dueDate:moment(this.state.dueDate.toDateString())
 
         };
         this.setState(prevState => ({
